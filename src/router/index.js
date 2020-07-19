@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
+import Welcome from '../components/Welcome.vue'
+import Users from '../components/user/Users.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -17,7 +19,13 @@ const routes = [
   {
     path: '/home',
     name: 'Home',
-    component: Home
+    component: Home,
+    redirect: '/welcome',
+    children: [
+      {path:'/welcome', component: Welcome},
+      {path:'/users', component: Users},
+      {path: '/', redirect: '/welcome'}
+    ]
   }
 ]
 
@@ -34,5 +42,9 @@ router.beforeEach((to,from,next)=>{
   if(!tokenstr) return next('/login') //token不存在跳转到登录页
   next() //token存在直接放行
 })
-
+//下面的代码解决重复点击菜单时报错  Avoided redundant navigation to current location
+const originalPush = VueRouter.prototype.push
+   VueRouter.prototype.push = function push(location) {
+   return originalPush.call(this, location).catch(err => err)
+}
 export default router
