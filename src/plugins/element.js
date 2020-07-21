@@ -26,7 +26,10 @@ import { Button,
   Tooltip,
   Pagination,
   Dialog,
-  MessageBox
+  MessageBox,
+  Tag,
+  Tree
+
 
  } from 'element-ui'
 /* 注册作为vue的全局组件,使所有vue组件中均可使用 */
@@ -55,6 +58,8 @@ Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Tag)
+Vue.use(Tree)
 
 /*
   对于组件使用Vue.use()进行挂载，则Vue可以识别和渲染该组件。

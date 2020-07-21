@@ -65,7 +65,7 @@
                     </template>
                   </el-menu-item>
 
-                  <el-menu-item index="2-2">
+                  <el-menu-item index="/rights">
                     <template slot="title">
                       <i class="el-icon-menu"></i>
                       <span>权限列表</span>

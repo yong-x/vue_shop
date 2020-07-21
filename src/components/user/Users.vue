@@ -44,7 +44,7 @@
             <el-button @click="removeUserById(scope.row.id,scope.row.username)" type="danger" icon="el-icon-delete" size="mini"></el-button>
             <!-- 分配角色按钮,是一个带文字提示的按钮 -->
             <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-button @click="setRole(scope.row)" type="warning" icon="el-icon-setting" size="mini"></el-button>
             </el-tooltip>
 
 
@@ -111,6 +111,30 @@
         <el-button type="primary" @click="editUserInfo">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 分配角色对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoledialogVisible"
+      width="50%">
+     <div>
+       <p>当前用户：{{userInfo.username}}</p>
+       <p>当前角色：{{userInfo.role_name}}</p>
+       <p>分配新角色：</p>
+       <el-select v-model="selectedRoleId"  placeholder="请选择">
+           <el-option
+             v-for="role in rolesList"
+             :key="role.id"
+             :label="role.roleName"
+             :value="role.id">
+           </el-option>
+         </el-select>
+     </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoledialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -173,7 +197,11 @@
             ]
         },
         editdialogVisible: false  ,//控制修改用户对话框的显示与隐藏
-        editForm: {}  //编辑用户信息表单时，需要提前向服务器查询用户信息，再把用户信息赋值给editForm进行展示
+        editForm: {},  //编辑用户信息表单时，需要提前向服务器查询用户信息，再把用户信息赋值给editForm进行展示
+        setRoledialogVisible: false,  //设置角色对话框的显示与隐藏
+        userInfo: {} ,//当前要设置角色的用户信息
+        rolesList: {}  ,//所有角色列表
+        selectedRoleId: ''  //已选中角色的id
       }
     },
     created() { //在组件的create生命周期中向服务器请求数据
@@ -296,8 +324,26 @@
           this.$message.success('删除用户成功')
           this.getUserList()
         }
-      }
+      },
 
+      async setRole(userInfo){
+        this.userInfo = userInfo
+        this.selectedRoleId=this.userInfo.role_id
+        const {data: result} = await this.$http.get('/roles/list')
+
+        console.log('获取到的所有角色列表为',result)
+
+        this.rolesList = result.data
+
+        this.setRoledialogVisible = true
+      },
+
+      saveRoleInfo(){
+        if(this.userInfo.role_id === this.selectedRoleId)
+          this.$message.info(`你没有改变角色，其id任然为${this.selectedRoleId}`)
+        else
+          this.$message.info(`你选择了新的角色，其id为${this.selectedRoleId}`)
+      }
 
 
 
